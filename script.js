@@ -43,18 +43,26 @@ window.addEventListener('load', () => {
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let blackHoleRotation = 0; // Rotação do buraco negro
+    
+    // Dimensões visuais (usadas para cálculos)
+    let canvasWidth = window.innerWidth;
+    let canvasHeight = window.innerHeight;
 
     // Ajustar canvas para fullscreen
     function resizeCanvas() {
         const dpr = window.devicePixelRatio || 1;
         
+        // Atualizar dimensões visuais
+        canvasWidth = window.innerWidth;
+        canvasHeight = window.innerHeight;
+        
         // Definir tamanho visual do canvas
-        canvas.style.width = window.innerWidth + 'px';
-        canvas.style.height = window.innerHeight + 'px';
+        canvas.style.width = canvasWidth + 'px';
+        canvas.style.height = canvasHeight + 'px';
         
         // Definir tamanho interno do canvas (considerando DPR para alta resolução)
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
+        canvas.width = canvasWidth * dpr;
+        canvas.height = canvasHeight * dpr;
         
         // Resetar transformações e escalar o contexto para compensar o DPR
         ctx.setTransform(1, 0, 0, 1, 0, 0);
@@ -76,10 +84,8 @@ window.addEventListener('load', () => {
         }
 
         reset() {
-            const width = canvas.width || window.innerWidth;
-            const height = canvas.height || window.innerHeight;
-            this.x = Math.random() * width;
-            this.y = Math.random() * height;
+            this.x = Math.random() * canvasWidth;
+            this.y = Math.random() * canvasHeight;
             this.vx = (Math.random() - 0.5) * CLOUD_SPEED;
             this.vy = (Math.random() - 0.5) * CLOUD_SPEED;
             this.size = 100 + Math.random() * 200;
@@ -104,14 +110,14 @@ window.addEventListener('load', () => {
             this.y += this.vy;
             
             if (this.x < -this.size * 2) {
-                this.x = canvas.width + this.size;
-            } else if (this.x > canvas.width + this.size * 2) {
+                this.x = canvasWidth + this.size;
+            } else if (this.x > canvasWidth + this.size * 2) {
                 this.x = -this.size;
             }
             
             if (this.y < -this.size * 2) {
-                this.y = canvas.height + this.size;
-            } else if (this.y > canvas.height + this.size * 2) {
+                this.y = canvasHeight + this.size;
+            } else if (this.y > canvasHeight + this.size * 2) {
                 this.y = -this.size;
             }
         }
@@ -292,8 +298,8 @@ window.addEventListener('load', () => {
             }
             
             // Verificar se o centro da estrela saiu da área visível (antes de verificar absorção)
-            if (this.x < 0 || this.x > canvas.width ||
-                this.y < 0 || this.y > canvas.height) {
+            if (this.x < 0 || this.x > canvasWidth ||
+                this.y < 0 || this.y > canvasHeight) {
                 return 'outOfBounds'; // Estrela saiu da tela
             }
             
@@ -313,11 +319,9 @@ window.addEventListener('load', () => {
 
     function getRandomPosition() {
         const margin = 50;
-        const width = canvas.width || window.innerWidth;
-        const height = canvas.height || window.innerHeight;
         return {
-            x: margin + Math.random() * (width - 2 * margin),
-            y: margin + Math.random() * (height - 2 * margin)
+            x: margin + Math.random() * (canvasWidth - 2 * margin),
+            y: margin + Math.random() * (canvasHeight - 2 * margin)
         };
     }
 
@@ -332,18 +336,13 @@ window.addEventListener('load', () => {
     function updateBlackHolePosition(x, y) {
         const rect = canvas.getBoundingClientRect();
         
-        // Calcular posição relativa ao canvas
-        // Em mobile, o canvas pode ter escala diferente, então calculamos a proporção
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
+        // Calcular posição relativa ao canvas usando dimensões visuais
+        mouseX = (x - rect.left) * (canvasWidth / rect.width);
+        mouseY = (y - rect.top) * (canvasHeight / rect.height);
         
-        // Posição relativa ao canvas
-        const relativeX = (x - rect.left) * scaleX;
-        const relativeY = (y - rect.top) * scaleY;
-        
-        // Atualizar posição (garantir que está dentro dos limites)
-        mouseX = Math.max(0, Math.min(canvas.width, relativeX));
-        mouseY = Math.max(0, Math.min(canvas.height, relativeY));
+        // Garantir que está dentro dos limites (usando dimensões visuais)
+        mouseX = Math.max(0, Math.min(canvasWidth, mouseX));
+        mouseY = Math.max(0, Math.min(canvasHeight, mouseY));
     }
 
     // Eventos de mouse (desktop)
@@ -356,15 +355,7 @@ window.addEventListener('load', () => {
         e.preventDefault();
         if (e.touches.length > 0) {
             const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            // Calcular posição considerando a escala do canvas
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            mouseX = (touch.clientX - rect.left) * scaleX;
-            mouseY = (touch.clientY - rect.top) * scaleY;
-            // Garantir limites
-            mouseX = Math.max(0, Math.min(canvas.width, mouseX));
-            mouseY = Math.max(0, Math.min(canvas.height, mouseY));
+            updateBlackHolePosition(touch.clientX, touch.clientY);
         }
     }, { passive: false });
 
@@ -372,15 +363,7 @@ window.addEventListener('load', () => {
         e.preventDefault();
         if (e.touches.length > 0) {
             const touch = e.touches[0];
-            const rect = canvas.getBoundingClientRect();
-            // Calcular posição considerando a escala do canvas
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            mouseX = (touch.clientX - rect.left) * scaleX;
-            mouseY = (touch.clientY - rect.top) * scaleY;
-            // Garantir limites
-            mouseX = Math.max(0, Math.min(canvas.width, mouseX));
-            mouseY = Math.max(0, Math.min(canvas.height, mouseY));
+            updateBlackHolePosition(touch.clientX, touch.clientY);
         }
     }, { passive: false });
 
@@ -399,7 +382,7 @@ window.addEventListener('load', () => {
         
         // Limpar canvas
         ctx.fillStyle = '#0f0f1a';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
         
         // Desenhar nuvens
         clouds.forEach(cloud => {
