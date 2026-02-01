@@ -16,35 +16,40 @@ Jogo simples e infantil desenvolvido em HTML, CSS e JavaScript usando Canvas. O 
 ### Mecânicas
 
 1. **Sistema de Estrelas**
-   - Máximo de 5 estrelas na tela simultaneamente
-   - Novas estrelas aparecem a cada 2 segundos (apenas se houver menos de 5 estrelas)
+   - Máximo de 10 estrelas na tela simultaneamente
+   - Novas estrelas aparecem a cada 1 segundo (apenas se houver menos de 10 estrelas)
    - Quando o limite é atingido, novas estrelas só aparecem após capturar as existentes
    - Estrelas são douradas com efeito de brilho suave e rotação lenta
-   - Tamanho: 40px
+   - Tamanho igual ao buraco negro (proporção 1:1 visual)
+   - **Respawn Automático**: Se uma estrela sair da área visível, ela é removida e uma nova aparece imediatamente
    - **Animação de Absorção**: Quando atraídas pelo buraco negro:
-     - Movem-se em espiral em direção ao mouse
+     - Movem-se em espiral em direção ao buraco negro
      - Rotação acelera progressivamente
      - Tamanho diminui gradualmente (até 90% de redução)
      - Brilho aumenta durante a absorção
      - Efeito de rastro quando próximas do buraco negro
+   - **Amortecimento**: Quando saem do campo de atração, perdem velocidade gradualmente até parar
 
 2. **Sistema de Nuvens (Fundo Animado)**
-   - 8 nuvens estilo fumaça se movendo suavemente pela tela
+   - 10 nuvens estilo fumaça se movendo suavemente pela tela
    - Cada nuvem é composta por 3-5 partes orgânicas com gradientes radiais
-   - Movimento contínuo e lento (velocidade: 0.3)
+   - Movimento contínuo e lento (velocidade: 0.5)
    - Nuvens reaparecem quando saem da tela
    - Opacidade baixa (20-35%) para não distrair
    - Cores em tons de cinza/azul escuro para simular céu/espaço
 
 3. **Buraco Negro (Cursor)**
-   - O mouse funciona como um buraco negro visual
-   - Buraco negro central preto (20px de raio)
+   - O mouse (desktop) ou toque (mobile) funciona como um buraco negro visual
+   - **Tamanhos adaptativos**:
+     - Desktop: 20px de raio
+     - Mobile: 30px de raio (maior para facilitar o toque)
+   - Detecção automática de dispositivo (mobile/desktop)
    - Anéis rotativos ao redor (horizonte de eventos)
    - Efeito de distorção com gradientes radiais
    - Anel interno brilhante azul
    - Ponto central brilhante
    - Rotação contínua dos anéis para efeito dinâmico
-   - Campo de atração: 150px de raio
+   - Campo de atração: 100px de raio
 
 4. **Sistema de Pontuação**
    - Contador no canto superior esquerdo
@@ -93,11 +98,13 @@ mouse-snow/
   - Adiciona movimento espiral quando sendo absorvida
   - Acelera rotação e brilho durante absorção
   - Reduz tamanho progressivamente
+  - Aplica amortecimento quando sai do campo de atração
   - Retorna `true` quando completamente absorvida
+  - Retorna `'outOfBounds'` quando sai da área visível
 - Propriedades de absorção:
   - `isBeingAbsorbed`: Estado de absorção
   - `absorptionProgress`: Progresso da absorção (0 a 1)
-  - `vx`, `vy`: Velocidade da estrela
+  - `vx`, `vy`: Velocidade da estrela (com amortecimento)
 
 #### Funções Principais
 
@@ -121,16 +128,20 @@ mouse-snow/
 
 ```javascript
 // Estrelas
-const MAX_STARS = 5;              // Limite de estrelas na tela
-const STAR_SPAWN_INTERVAL = 2000; // Intervalo de spawn (ms)
-const STAR_SIZE = 40;             // Tamanho das estrelas (px)
-const ATTRACTION_DISTANCE = 150;  // Distância para começar a atrair (px)
-const BLACK_HOLE_SIZE = 20;       // Tamanho do buraco negro (px)
+const MAX_STARS = 10;             // Limite de estrelas na tela
+const STAR_SPAWN_INTERVAL = 1000; // Intervalo de spawn (ms)
+const ATTRACTION_DISTANCE = 100;  // Distância para começar a atrair (px)
 const GRAVITY_STRENGTH = 0.5;     // Força de atração gravitacional
 
+// Buraco Negro (tamanhos adaptativos)
+const BLACK_HOLE_SIZE_DESKTOP = 20; // Tamanho para desktop (px)
+const BLACK_HOLE_SIZE_MOBILE = 30; // Tamanho para mobile (px)
+const BLACK_HOLE_SIZE = isMobile ? BLACK_HOLE_SIZE_MOBILE : BLACK_HOLE_SIZE_DESKTOP;
+const STAR_SIZE = BLACK_HOLE_SIZE; // Estrela sempre do mesmo tamanho (proporção 1:1)
+
 // Nuvens
-const NUM_CLOUDS = 8;             // Quantidade de nuvens
-const CLOUD_SPEED = 0.3;          // Velocidade de movimento
+const NUM_CLOUDS = 10;            // Quantidade de nuvens
+const CLOUD_SPEED = 0.5;          // Velocidade de movimento
 ```
 
 ### Cores
@@ -168,6 +179,9 @@ const CLOUD_SPEED = 0.3;          // Velocidade de movimento
 - Progressão visual durante absorção (encolhimento, rotação acelerada, brilho)
 - Campo de atração configurável (100px)
 - Força gravitacional ajustável
+- **Amortecimento de velocidade**: Estrelas perdem velocidade gradualmente quando saem do campo de atração
+- **Respawn automático**: Estrelas que saem da tela são removidas e novas aparecem imediatamente
+- **Tamanhos adaptativos**: Tamanhos diferentes para desktop e mobile
 
 ### Suporte Mobile
 - Controle via touch (toque na tela)
@@ -176,6 +190,9 @@ const CLOUD_SPEED = 0.3;          // Velocidade de movimento
 - Meta tags otimizadas para mobile
 - CSS com `touch-action: none` para melhor controle
 - Viewport configurado para fullscreen em dispositivos móveis
+- **Cálculo preciso de posição**: Correção do cálculo de posição do touch para centralizar o buraco negro no dedo
+- **Tamanhos adaptativos**: Buraco negro maior em mobile (30px) para facilitar o toque
+- **Detecção automática**: Sistema detecta automaticamente se é mobile ou desktop
 
 ## Como Usar
 

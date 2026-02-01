@@ -17,9 +17,19 @@ window.addEventListener('load', () => {
     // Configurações do jogo
     const MAX_STARS = 10;
     const STAR_SPAWN_INTERVAL = 1000;
-    const STAR_SIZE = 40;
+    
+    // Detectar se é dispositivo móvel
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     (window.matchMedia && window.matchMedia("(max-width: 768px)").matches) ||
+                     ('ontouchstart' in window);
+    
+    // Tamanhos do buraco negro (desktop e mobile)
+    const BLACK_HOLE_SIZE_DESKTOP = 20;
+    const BLACK_HOLE_SIZE_MOBILE = 30;
+    const BLACK_HOLE_SIZE = isMobile ? BLACK_HOLE_SIZE_MOBILE : BLACK_HOLE_SIZE_DESKTOP;
+    
+    const STAR_SIZE = BLACK_HOLE_SIZE; // Estrela com mesmo tamanho do buraco negro (proporção 1:1)
     const ATTRACTION_DISTANCE = 100; // Distância para começar a atrair
-    const BLACK_HOLE_SIZE = 40; // Tamanho do buraco negro
     const GRAVITY_STRENGTH = 0.5; // Força de atração
 
     // Configurações das nuvens
@@ -173,8 +183,8 @@ window.addEventListener('load', () => {
             ctx.beginPath();
             for (let i = 0; i < 5; i++) {
                 const angle = (i * 4 * Math.PI / 5) - Math.PI / 2;
-                const xPos = Math.cos(angle) * currentSize / 2;
-                const yPos = Math.sin(angle) * currentSize / 2;
+                const xPos = Math.cos(angle) * currentSize;
+                const yPos = Math.sin(angle) * currentSize;
                 if (i === 0) {
                     ctx.moveTo(xPos, yPos);
                 } else {
