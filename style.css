@@ -1,0 +1,43 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #0f0f1a;
+    font-family: Arial, sans-serif;
+    touch-action: none; /* Prevenir gestos de touch padrão */
+    user-select: none; /* Prevenir seleção de texto */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    /* Prevenir zoom em mobile */
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    cursor: crosshair;
+    touch-action: none; /* Prevenir gestos de touch padrão */
+    user-select: none; /* Prevenir seleção de texto */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+#score {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: #fff;
+    font-size: 24px;
+    z-index: 10;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
