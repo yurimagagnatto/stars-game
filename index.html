@@ -9,6 +9,38 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="startDialog" class="dialog">
+        <div class="dialog-content">
+            <h2>Configurações do Jogo</h2>
+            
+            <div class="control-group">
+                <label for="starsSlider">Quantidade de Estrelas: <span id="starsValue">10</span></label>
+                <input type="range" id="starsSlider" min="0" max="4" value="0" step="1">
+                <div class="slider-labels">
+                    <span>10</span>
+                    <span>20</span>
+                    <span>30</span>
+                    <span>40</span>
+                    <span>50</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label for="speedSlider">Velocidade de Aparição: <span id="speedValue">1000ms</span></label>
+                <input type="range" id="speedSlider" min="0" max="4" value="0" step="1">
+                <div class="slider-labels">
+                    <span>1000ms</span>
+                    <span>800ms</span>
+                    <span>600ms</span>
+                    <span>400ms</span>
+                    <span>200ms</span>
+                </div>
+            </div>
+            
+            <button id="startButton" class="start-button">Iniciar Jogo</button>
+        </div>
+    </div>
+    
     <canvas id="gameCanvas"></canvas>
     <div id="score">Estrelas: 0</div>
     <script src="script.js"></script>

@@ -32,6 +32,10 @@ body {
     -ms-user-select: none;
 }
 
+#gameCanvas.hidden {
+    display: none;
+}
+
 #score {
     position: fixed;
     top: 20px;
@@ -40,4 +44,132 @@ body {
     font-size: 24px;
     z-index: 10;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+#score.hidden {
+    display: none;
+}
+
+/* Diálogo de Configurações */
+.dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    touch-action: auto; /* Permitir interação com sliders no mobile */
+}
+
+.dialog.hidden {
+    display: none;
+}
+
+.dialog-content {
+    background-color: #1a1a2e;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.dialog-content h2 {
+    color: #FFD700;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 24px;
+}
+
+.control-group {
+    margin-bottom: 30px;
+}
+
+.control-group label {
+    display: block;
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.control-group input[type="range"] {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: #0f0f1a;
+    outline: none;
+    -webkit-appearance: none;
+    margin-bottom: 5px;
+}
+
+.control-group input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.control-group input[type="range"]::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.slider-labels {
+    display: flex;
+    justify-content: space-between;
+    color: #888;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.start-button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 10px;
+}
+
+.start-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+.start-button:active {
+    transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+    .dialog-content {
+        padding: 20px;
+        width: 85%;
+    }
+    
+    .dialog-content h2 {
+        font-size: 20px;
+    }
+    
+    .control-group label {
+        font-size: 14px;
+    }
 }

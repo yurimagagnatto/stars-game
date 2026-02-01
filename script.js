@@ -13,10 +13,20 @@ window.addEventListener('load', () => {
     }
     
     const scoreElement = document.getElementById('score');
+    const startDialog = document.getElementById('startDialog');
+    const starsSlider = document.getElementById('starsSlider');
+    const speedSlider = document.getElementById('speedSlider');
+    const starsValue = document.getElementById('starsValue');
+    const speedValue = document.getElementById('speedValue');
+    const startButton = document.getElementById('startButton');
 
-    // Configurações do jogo
-    const MAX_STARS = 10;
-    const STAR_SPAWN_INTERVAL = 1000;
+    // Valores possíveis para configuração
+    const STAR_OPTIONS = [10, 20, 30, 40, 50];
+    const SPEED_OPTIONS = [1000, 800, 600, 400, 200]; // em ms
+
+    // Configurações do jogo (serão definidas pelo usuário)
+    let MAX_STARS = STAR_OPTIONS[0];
+    let STAR_SPAWN_INTERVAL = SPEED_OPTIONS[0];
     
     // Detectar se é dispositivo móvel
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
@@ -470,8 +480,39 @@ window.addEventListener('load', () => {
         requestAnimationFrame(gameLoop);
     }
 
-    // Iniciar
-    initClouds();
-    spawnStar();
-    requestAnimationFrame(gameLoop);
+    // Atualizar valores dos sliders
+    function updateStarsValue() {
+        const index = parseInt(starsSlider.value);
+        MAX_STARS = STAR_OPTIONS[index];
+        starsValue.textContent = MAX_STARS;
+    }
+
+    function updateSpeedValue() {
+        const index = parseInt(speedSlider.value);
+        STAR_SPAWN_INTERVAL = SPEED_OPTIONS[index];
+        speedValue.textContent = STAR_SPAWN_INTERVAL + 'ms';
+    }
+
+    // Event listeners dos sliders
+    starsSlider.addEventListener('input', updateStarsValue);
+    speedSlider.addEventListener('input', updateSpeedValue);
+
+    // Inicializar valores
+    updateStarsValue();
+    updateSpeedValue();
+
+    // Botão de iniciar
+    startButton.addEventListener('click', () => {
+        startDialog.classList.add('hidden');
+        canvas.classList.remove('hidden');
+        scoreElement.classList.remove('hidden');
+        // Iniciar jogo
+        initClouds();
+        spawnStar();
+        requestAnimationFrame(gameLoop);
+    });
+
+    // Ocultar canvas e score inicialmente
+    canvas.classList.add('hidden');
+    scoreElement.classList.add('hidden');
 });
