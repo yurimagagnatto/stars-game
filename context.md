@@ -76,7 +76,7 @@ mouse-snow/
 - Layout fullscreen (100vw x 100vh)
 - Fundo escuro (#0f0f1a)
 - Canvas ocupa toda a tela
-- Cursor personalizado (crosshair)
+- Cursor oculto (apenas o buraco negro é visível)
 - Estilo do contador de pontuação
 
 ### script.js

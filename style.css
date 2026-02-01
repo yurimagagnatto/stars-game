@@ -24,7 +24,7 @@ body {
     display: block;
     width: 100vw;
     height: 100vh;
-    cursor: crosshair;
+    cursor: none; /* Cursor oculto - apenas o buraco negro é visível */
     touch-action: none; /* Prevenir gestos de touch padrão */
     user-select: none; /* Prevenir seleção de texto */
     -webkit-user-select: none;
