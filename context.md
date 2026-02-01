@@ -9,7 +9,7 @@ Jogo simples e infantil desenvolvido em HTML, CSS e JavaScript usando Canvas. O 
 ### Objetivo
 - A criança move o mouse (desktop) ou o dedo (mobile) pela tela
 - O cursor/toque age como um buraco negro que atrai e absorve estrelas
-- Ao aproximar o buraco negro de uma estrela (dentro de 100px), ela começa a ser atraída
+- Ao aproximar o buraco negro de uma estrela (dentro do campo de atração), ela começa a ser atraída
 - As estrelas são absorvidas com uma animação de espiral e encolhimento
 - O objetivo é capturar o máximo de estrelas possível
 
@@ -40,16 +40,14 @@ Jogo simples e infantil desenvolvido em HTML, CSS e JavaScript usando Canvas. O 
 
 3. **Buraco Negro (Cursor)**
    - O mouse (desktop) ou toque (mobile) funciona como um buraco negro visual
-   - **Tamanhos adaptativos**:
-     - Desktop: 20px de raio
-     - Mobile: 30px de raio (maior para facilitar o toque)
+   - **Tamanhos adaptativos**: Tamanhos diferentes para desktop e mobile (configuráveis nas constantes)
    - Detecção automática de dispositivo (mobile/desktop)
    - Anéis rotativos ao redor (horizonte de eventos)
    - Efeito de distorção com gradientes radiais
    - Anel interno brilhante azul
    - Ponto central brilhante
    - Rotação contínua dos anéis para efeito dinâmico
-   - Campo de atração: 100px de raio
+   - Campo de atração configurável (definido nas constantes)
 
 4. **Sistema de Pontuação**
    - Contador no canto superior esquerdo
@@ -135,7 +133,7 @@ const GRAVITY_STRENGTH = 0.5;     // Força de atração gravitacional
 
 // Buraco Negro (tamanhos adaptativos)
 const BLACK_HOLE_SIZE_DESKTOP = 20; // Tamanho para desktop (px)
-const BLACK_HOLE_SIZE_MOBILE = 30; // Tamanho para mobile (px)
+const BLACK_HOLE_SIZE_MOBILE = 40; // Tamanho para mobile (px)
 const BLACK_HOLE_SIZE = isMobile ? BLACK_HOLE_SIZE_MOBILE : BLACK_HOLE_SIZE_DESKTOP;
 const STAR_SIZE = BLACK_HOLE_SIZE; // Estrela sempre do mesmo tamanho (proporção 1:1)
 
@@ -177,7 +175,7 @@ const CLOUD_SPEED = 0.5;          // Velocidade de movimento
 - Animação de absorção com movimento espiral
 - Efeito visual de buraco negro com anéis rotativos
 - Progressão visual durante absorção (encolhimento, rotação acelerada, brilho)
-- Campo de atração configurável (100px)
+- Campo de atração configurável (definido nas constantes)
 - Força gravitacional ajustável
 - **Amortecimento de velocidade**: Estrelas perdem velocidade gradualmente quando saem do campo de atração
 - **Respawn automático**: Estrelas que saem da tela são removidas e novas aparecem imediatamente
@@ -191,7 +189,7 @@ const CLOUD_SPEED = 0.5;          // Velocidade de movimento
 - CSS com `touch-action: none` para melhor controle
 - Viewport configurado para fullscreen em dispositivos móveis
 - **Cálculo preciso de posição**: Correção do cálculo de posição do touch para centralizar o buraco negro no dedo
-- **Tamanhos adaptativos**: Buraco negro maior em mobile (30px) para facilitar o toque
+- **Tamanhos adaptativos**: Buraco negro maior em mobile para facilitar o toque (tamanhos configuráveis nas constantes)
 - **Detecção automática**: Sistema detecta automaticamente se é mobile ou desktop
 
 ## Como Usar

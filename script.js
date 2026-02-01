@@ -25,10 +25,10 @@ window.addEventListener('load', () => {
     
     // Tamanhos do buraco negro (desktop e mobile)
     const BLACK_HOLE_SIZE_DESKTOP = 20;
-    const BLACK_HOLE_SIZE_MOBILE = 30;
+    const BLACK_HOLE_SIZE_MOBILE = 40;
     const BLACK_HOLE_SIZE = isMobile ? BLACK_HOLE_SIZE_MOBILE : BLACK_HOLE_SIZE_DESKTOP;
     
-    const STAR_SIZE = BLACK_HOLE_SIZE; // Estrela com mesmo tamanho do buraco negro (proporção 1:1)
+    const STAR_SIZE = 20; // Estrela com mesmo tamanho do buraco negro (proporção 1:1)
     const ATTRACTION_DISTANCE = 100; // Distância para começar a atrair
     const GRAVITY_STRENGTH = 0.5; // Força de atração
 
