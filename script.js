@@ -46,8 +46,19 @@ window.addEventListener('load', () => {
 
     // Ajustar canvas para fullscreen
     function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        const dpr = window.devicePixelRatio || 1;
+        
+        // Definir tamanho visual do canvas
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        
+        // Definir tamanho interno do canvas (considerando DPR para alta resolução)
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        
+        // Resetar transformações e escalar o contexto para compensar o DPR
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.scale(dpr, dpr);
     }
 
     resizeCanvas();
