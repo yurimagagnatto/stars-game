@@ -19,7 +19,7 @@ window.addEventListener('load', () => {
     const STAR_SPAWN_INTERVAL = 1000;
     const STAR_SIZE = 40;
     const ATTRACTION_DISTANCE = 100; // Distância para começar a atrair
-    const BLACK_HOLE_SIZE = 20; // Tamanho do buraco negro
+    const BLACK_HOLE_SIZE = 40; // Tamanho do buraco negro
     const GRAVITY_STRENGTH = 0.5; // Força de atração
 
     // Configurações das nuvens
@@ -310,8 +310,19 @@ window.addEventListener('load', () => {
     // Função para atualizar posição do buraco negro
     function updateBlackHolePosition(x, y) {
         const rect = canvas.getBoundingClientRect();
-        mouseX = x - rect.left;
-        mouseY = y - rect.top;
+        
+        // Calcular posição relativa ao canvas
+        // Em mobile, o canvas pode ter escala diferente, então calculamos a proporção
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        
+        // Posição relativa ao canvas
+        const relativeX = (x - rect.left) * scaleX;
+        const relativeY = (y - rect.top) * scaleY;
+        
+        // Atualizar posição (garantir que está dentro dos limites)
+        mouseX = Math.max(0, Math.min(canvas.width, relativeX));
+        mouseY = Math.max(0, Math.min(canvas.height, relativeY));
     }
 
     // Eventos de mouse (desktop)
@@ -319,22 +330,38 @@ window.addEventListener('load', () => {
         updateBlackHolePosition(e.clientX, e.clientY);
     });
 
-    // Eventos de touch (mobile)
+    // Eventos de touch (mobile) - cálculo direto para melhor precisão
     canvas.addEventListener('touchstart', (e) => {
-        e.preventDefault(); // Prevenir scroll
+        e.preventDefault();
         if (e.touches.length > 0) {
             const touch = e.touches[0];
-            updateBlackHolePosition(touch.clientX, touch.clientY);
+            const rect = canvas.getBoundingClientRect();
+            // Calcular posição considerando a escala do canvas
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            mouseX = (touch.clientX - rect.left) * scaleX;
+            mouseY = (touch.clientY - rect.top) * scaleY;
+            // Garantir limites
+            mouseX = Math.max(0, Math.min(canvas.width, mouseX));
+            mouseY = Math.max(0, Math.min(canvas.height, mouseY));
         }
-    });
+    }, { passive: false });
 
     canvas.addEventListener('touchmove', (e) => {
-        e.preventDefault(); // Prevenir scroll
+        e.preventDefault();
         if (e.touches.length > 0) {
             const touch = e.touches[0];
-            updateBlackHolePosition(touch.clientX, touch.clientY);
+            const rect = canvas.getBoundingClientRect();
+            // Calcular posição considerando a escala do canvas
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            mouseX = (touch.clientX - rect.left) * scaleX;
+            mouseY = (touch.clientY - rect.top) * scaleY;
+            // Garantir limites
+            mouseX = Math.max(0, Math.min(canvas.width, mouseX));
+            mouseY = Math.max(0, Math.min(canvas.height, mouseY));
         }
-    });
+    }, { passive: false });
 
     canvas.addEventListener('touchend', (e) => {
         e.preventDefault();
