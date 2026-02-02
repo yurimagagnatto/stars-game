@@ -41,13 +41,25 @@ window.addEventListener('load', () => {
     const STAR_SIZE = 20; // Estrela com mesmo tamanho do buraco negro (proporção 1:1)
     const ATTRACTION_DISTANCE = 100; // Distância para começar a atrair
     const GRAVITY_STRENGTH = 0.5; // Força de atração
+    
+    // Configurações de rotação das estrelas
+    const STAR_ROTATION_SPEED_REST = 0.02; // Velocidade de rotação quando em repouso
+    const STAR_ROTATION_ACCELERATION = 0.01; // Aceleração de rotação durante atração
 
     // Configurações das nuvens
     const NUM_CLOUDS = 10;
     const CLOUD_SPEED = 0.5;
+    const CLOUD_SIZE_MIN = 250; // Tamanho mínimo das nuvens
+    const CLOUD_SIZE_MAX = 500; // Tamanho máximo das nuvens
+
+    // Configurações de efeitos
+    const EXPLOSION_PARTICLE_COUNT = 20; // Quantidade base de partículas na explosão
+    const EXPLOSION_PARTICLE_VARIATION = 10; // Variação aleatória de partículas
+    const EXPLOSION_RADIUS = 10; // Raio/tamanho da explosão (velocidade inicial das partículas)
 
     let stars = [];
     let clouds = [];
+    let particles = []; // Partículas de poeira estelar
     let score = 0;
     let lastStarSpawn = Date.now();
     let mouseX = window.innerWidth / 2;
@@ -98,7 +110,7 @@ window.addEventListener('load', () => {
             this.y = Math.random() * canvasHeight;
             this.vx = (Math.random() - 0.5) * CLOUD_SPEED;
             this.vy = (Math.random() - 0.5) * CLOUD_SPEED;
-            this.size = 100 + Math.random() * 200;
+            this.size = CLOUD_SIZE_MIN + Math.random() * (CLOUD_SIZE_MAX - CLOUD_SIZE_MIN);
             this.parts = [];
             
             const numParts = 3 + Math.floor(Math.random() * 3);
@@ -167,6 +179,69 @@ window.addEventListener('load', () => {
         }
     }
 
+    // Classe Partícula de Poeira Estelar
+    class Particle {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.vx = (Math.random() - 0.5) * EXPLOSION_RADIUS; // Velocidade horizontal aleatória
+            this.vy = (Math.random() - 0.5) * EXPLOSION_RADIUS; // Velocidade vertical aleatória
+            this.life = 1.0; // Vida da partícula (1.0 = totalmente visível, 0.0 = invisível)
+            this.decay = 0.02 + Math.random() * 0.03; // Velocidade de desaparecimento
+            this.size = 2 + Math.random() * 3; // Tamanho da partícula
+            this.color = {
+                r: 255,
+                g: 215 + Math.random() * 40, // 215-255 (dourado)
+                b: Math.random() * 100 // 0-100 (amarelo/dourado)
+            };
+        }
+
+        update() {
+            // Mover partícula
+            this.x += this.vx;
+            this.y += this.vy;
+            
+            // Reduzir velocidade (fricção)
+            this.vx *= 0.98;
+            this.vy *= 0.98;
+            
+            // Reduzir vida
+            this.life -= this.decay;
+            
+            // Retornar true se a partícula ainda está viva
+            return this.life > 0;
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.life;
+            
+            // Criar gradiente radial para brilho
+            const gradient = ctx.createRadialGradient(
+                this.x, this.y, 0,
+                this.x, this.y, this.size
+            );
+            gradient.addColorStop(0, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 1)`);
+            gradient.addColorStop(0.5, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0.5)`);
+            gradient.addColorStop(1, `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, 0)`);
+            
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.restore();
+        }
+    }
+
+    // Criar explosão de partículas
+    function createStarDustExplosion(x, y) {
+        const particleCount = EXPLOSION_PARTICLE_COUNT + Math.floor(Math.random() * EXPLOSION_PARTICLE_VARIATION);
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle(x, y));
+        }
+    }
+
     // Classe Estrela
     class Star {
         constructor(x, y) {
@@ -177,7 +252,7 @@ window.addEventListener('load', () => {
             this.size = STAR_SIZE;
             this.originalSize = STAR_SIZE;
             this.rotation = 0;
-            this.rotationSpeed = 0.02;
+            this.rotationSpeed = STAR_ROTATION_SPEED_REST;
             this.twinkle = Math.random() * Math.PI * 2;
             this.twinkleSpeed = 0.05;
             this.isBeingAbsorbed = false;
@@ -249,7 +324,7 @@ window.addEventListener('load', () => {
                 // Restaurar tamanho original gradualmente
                 this.size = this.originalSize;
                 // Resetar rotação e twinkle para valores normais
-                this.rotationSpeed = 0.02;
+                this.rotationSpeed = STAR_ROTATION_SPEED_REST;
                 this.twinkleSpeed = 0.05;
             }
             
@@ -271,7 +346,7 @@ window.addEventListener('load', () => {
                 this.y += this.vy;
                 
                 // Acelerar rotação durante absorção (mais rápido quando mais próximo)
-                const rotationBoost = (1 - distance / ATTRACTION_DISTANCE) * 0.1;
+                const rotationBoost = (1 - distance / ATTRACTION_DISTANCE) * STAR_ROTATION_ACCELERATION;
                 this.rotationSpeed += rotationBoost;
                 this.rotation += this.rotationSpeed;
                 
@@ -400,6 +475,17 @@ window.addEventListener('load', () => {
             cloud.draw();
         });
         
+        // Atualizar e desenhar partículas de poeira estelar
+        for (let i = particles.length - 1; i >= 0; i--) {
+            const particle = particles[i];
+            if (particle.update()) {
+                particle.draw();
+            } else {
+                // Remover partícula morta
+                particles.splice(i, 1);
+            }
+        }
+        
         // Spawn de estrelas
         if (currentTime - lastStarSpawn > STAR_SPAWN_INTERVAL) {
             spawnStar();
@@ -413,6 +499,8 @@ window.addEventListener('load', () => {
             
             if (result === true) {
                 // Estrela foi absorvida pelo buraco negro
+                // Criar explosão de poeira estelar na posição da estrela
+                createStarDustExplosion(star.x, star.y);
                 stars.splice(i, 1);
                 score++;
                 if (scoreElement) {

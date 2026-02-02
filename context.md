@@ -26,16 +26,21 @@ Jogo simples e infantil desenvolvido em HTML, CSS e JavaScript usando Canvas. O 
    - **Respawn Automático**: Se uma estrela sair da área visível, ela é removida e uma nova aparece imediatamente
    - **Animação de Absorção**: Quando atraídas pelo buraco negro:
      - Movem-se em espiral em direção ao buraco negro
-     - Rotação acelera progressivamente
+     - Rotação acelera progressivamente (configurável)
      - Tamanho diminui gradualmente (até 90% de redução)
      - Brilho aumenta durante a absorção
      - Efeito de rastro quando próximas do buraco negro
    - **Amortecimento**: Quando saem do campo de atração, perdem velocidade gradualmente até parar
+   - **Efeito de Explosão**: Ao ser completamente absorvida, a estrela explode em poeira estelar dourada
+     - Partículas se espalham em todas as direções
+     - Cores douradas/amarelas com gradiente radial
+     - Desaparecem gradualmente com efeito de fricção
 
 2. **Sistema de Nuvens (Fundo Animado)**
    - 10 nuvens estilo fumaça se movendo suavemente pela tela
    - Cada nuvem é composta por 3-5 partes orgânicas com gradientes radiais
    - Movimento contínuo e lento (velocidade: 0.5)
+   - Tamanho configurável (tamanho mínimo e máximo definidos nas constantes)
    - Nuvens reaparecem quando saem da tela
    - Opacidade baixa (20-35%) para não distrair
    - Cores em tons de cinza/azul escuro para simular céu/espaço
@@ -120,6 +125,17 @@ mouse-snow/
   - `absorptionProgress`: Progresso da absorção (0 a 1)
   - `vx`, `vy`: Velocidade da estrela (com amortecimento)
 
+**Particle (Partícula de Poeira Estelar)**
+- `update()`: Move a partícula, aplica fricção e reduz vida. Retorna `true` se ainda está viva
+- `draw()`: Desenha partícula com gradiente radial dourado
+- Propriedades:
+  - `x`, `y`: Posição da partícula
+  - `vx`, `vy`: Velocidade da partícula (com fricção)
+  - `life`: Vida da partícula (1.0 a 0.0)
+  - `decay`: Velocidade de desaparecimento
+  - `size`: Tamanho da partícula (2-5px)
+  - `color`: Cor dourada/amarela variada (RGB)
+
 #### Funções Principais
 
 - `resizeCanvas()`: Ajusta o canvas para fullscreen considerando device pixel ratio
@@ -129,6 +145,8 @@ mouse-snow/
 - `gameLoop()`: Loop principal de animação do jogo
 - `updateStarsValue()`: Atualiza valor da quantidade de estrelas baseado no slider
 - `updateSpeedValue()`: Atualiza valor da velocidade de spawn baseado no slider
+- `createStarDustExplosion(x, y)`: Cria explosão de partículas de poeira estelar na posição especificada
+- `createStarDustExplosion(x, y)`: Cria explosão de partículas de poeira estelar na posição especificada
 
 #### Event Listeners
 
@@ -166,6 +184,17 @@ const STAR_SIZE = BLACK_HOLE_SIZE; // Estrela sempre do mesmo tamanho (proporç�
 // Nuvens
 const NUM_CLOUDS = 10;            // Quantidade de nuvens
 const CLOUD_SPEED = 0.5;          // Velocidade de movimento
+const CLOUD_SIZE_MIN = 250;       // Tamanho mínimo das nuvens
+const CLOUD_SIZE_MAX = 500;       // Tamanho máximo das nuvens
+
+// Configurações de rotação das estrelas
+const STAR_ROTATION_SPEED_REST = 0.02;      // Velocidade de rotação quando em repouso
+const STAR_ROTATION_ACCELERATION = 0.01;   // Aceleração de rotação durante atração
+
+// Configurações de efeitos
+const EXPLOSION_PARTICLE_COUNT = 20;        // Quantidade base de partículas na explosão
+const EXPLOSION_PARTICLE_VARIATION = 10;   // Variação aleatória de partículas
+const EXPLOSION_RADIUS = 10;                // Raio/tamanho da explosão
 ```
 
 ### Cores
@@ -278,7 +307,7 @@ const CLOUD_SPEED = 0.5;          // Velocidade de movimento
 
 - Mais opções de configuração (força gravitacional, campo de atração)
 - Salvar configurações preferidas do usuário
-- Efeitos de partículas ao absorver estrelas
+- ~~Efeitos de partículas ao absorver estrelas~~ ✅ Implementado
 - Sons suaves (opcional)
 - Diferentes tipos de estrelas com propriedades diferentes
 - Sistema de níveis ou tempo limite
